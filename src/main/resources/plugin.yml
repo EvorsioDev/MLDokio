@@ -1,7 +1,7 @@
 name: MLDokio
-version: ${project.version}
+version: plugin-version
 main: ru.armagidon.mldokio.MLDokio
-api-version: 1.16
+api-version: "1.16"
 depend: [ProtocolLib]
 authors: [Armagidon_MC]
-description: Gives you opportunity to create a music in minecraft
+description: Allows you to record your music in minecraft

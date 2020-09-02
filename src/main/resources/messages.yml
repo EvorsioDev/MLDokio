@@ -1,0 +1,15 @@
+recordings:
+  no-track-found: "There's no track called {track.label}"
+  playing-recording: "Playing {track.label} ..."
+  stopped-playing-recording: "Stopped playing recording {track.label}"
+  disc-given: "Disc with track {track.label} is given to you! Enjoy the music :)"
+recorder:
+  recording-started: "Recording started!"
+  you-are-already-recording: "You're already recording!"
+  recording-stopped: "Recording stopped"
+  you-are-not-recording: "You're not recording"
+  play-recorded: "Playing recorded..."
+  stop-playing-recorded: "Stopped playing recorded!"
+  you-didnt-record-anything: "You didn't record anything"
+  recording-saved: "Track saved as: {track.label}"
+  recording-exists: "This recording already exists!"

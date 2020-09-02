@@ -8,6 +8,7 @@ import ru.armagidon.mldokio.commands.RecordingsCommand;
 import ru.armagidon.mldokio.handlers.JukeboxPacketHandler;
 import ru.armagidon.mldokio.handlers.PluginListener;
 import ru.armagidon.mldokio.io.IOWorker;
+import ru.armagidon.mldokio.messaging.MessageManager;
 import ru.armagidon.mldokio.recorder.Recorder;
 import ru.armagidon.mldokio.recorder.Recordings;
 import ru.armagidon.mldokio.sound.SoundTrack;
@@ -26,6 +27,7 @@ public final class MLDokio extends JavaPlugin {
 
     @Getter private static MLDokio instance;
     @Getter private final IOWorker IOWorker;
+    @Getter private static MessageManager messages;
     private final Recordings recordings;
 
     public MLDokio() {
@@ -38,6 +40,7 @@ public final class MLDokio extends JavaPlugin {
             } catch (FileNotFoundException ignored) {}
         });
         recordings = new Recordings(correspondingUUIDs);
+        messages = new MessageManager();
     }
 
     @Override

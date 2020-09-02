@@ -33,15 +33,18 @@ public class RecordingsCommand extends BukkitCommand
             String trackLabel = Joiner.on(" ").join(Arrays.copyOfRange(args, 1,args.length));
             SoundTrack cassette = recordings.getTrack(trackLabel);
             if(cassette==null){
-                player.sendMessage("There's no track called "+trackLabel);
+                MLDokio.getMessages().sendWithTrackLabel(player, "recordings.no-track-found",trackLabel);
                 return true;
             }
             if(sub.equalsIgnoreCase("play")){
                 SoundPlayer.createSoundPlayer(cassette.getId(), cassette.getBuffer(), player).play();
+                MLDokio.getMessages().sendWithTrackLabel(player, "recordings.playing-recording", trackLabel);
             } else if(sub.equalsIgnoreCase("stop")){
                 SoundPlayer.getSoundPlayer(cassette.getId()).stop();
+                MLDokio.getMessages().sendWithTrackLabel(player, "recordings.stopped-playing-recording",trackLabel);
             } else if(sub.equalsIgnoreCase("get")){
                 player.getInventory().addItem(DiscFactory.createDisc(cassette));
+                MLDokio.getMessages().sendWithTrackLabel(player, "recordings.disc-given",trackLabel);
             }
         }
         return true;
