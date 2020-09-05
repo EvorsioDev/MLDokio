@@ -68,10 +68,12 @@ public final class MLDokio extends JavaPlugin {
 
     private void createCrafts(){
         ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(this, "recorder"),ItemRegistry.RECORDER);
-        recipe.shape("   ","ID ","IR ");
+        recipe.shape("RD ","Ir ","IY ");
         recipe.setIngredient('I', Material.IRON_INGOT);
         recipe.setIngredient('D',Material.MUSIC_DISC_STAL);
-        recipe.setIngredient('R',Material.REDSTONE);
+        recipe.setIngredient('r',Material.REDSTONE);
+        recipe.setIngredient('Y', Material.YELLOW_WOOL);
+        recipe.setIngredient('R', Material.RED_WOOL);
         Bukkit.addRecipe(recipe);
     }
 }
