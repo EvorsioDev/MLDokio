@@ -7,56 +7,58 @@ import ru.armagidon.mldokio.player.MusicListener;
 import ru.armagidon.mldokio.recorder.Recorder;
 import ru.armagidon.mldokio.recorder.Recordings;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RecorderCommand extends BukkitCommand
 {
 
-    private final Recorder recorder;
     private final Recordings recordings;
+    private final Map<Player, Recorder> recordingPlayers;
 
-    public RecorderCommand(Recorder recorder, Recordings recordings) {
+    public RecorderCommand(Recordings recordings) {
         super("recorder");
         this.recordings = recordings;
-        this.recorder = recorder;
+        recordingPlayers = new HashMap<>();
     }
 
     @Override
     protected boolean execute(Player player, String label, String[] args) {
         if(args.length==0) return false;
         String sub = args[0];
+        Recorder recorder = recordingPlayers.get(player);
         if(sub.equalsIgnoreCase("start")){
-            if(recorder.isRecording(player)){
-                MLDokio.getMessages().send(player, "recorder.you-are-already-recording");
-                return true;
+            if(recorder!=null) {
+                if (recorder.isRecording()) {
+                    MLDokio.getMessages().send(player, "recorder.you-are-already-recording");
+                    return true;
+                }
+            } else {
+                recorder = new Recorder();
+                recordingPlayers.put(player, recorder);
             }
             recorder.startRecording(player);
             MLDokio.getMessages().send(player, "recorder.recording-started");
         } else if(sub.equalsIgnoreCase("stop")){
             if(MusicListener.musicListeners.get(player).isListening()){
-                recorder.stopPlayingRecorded(player);
+                recorder.stopRecorded();
                 MLDokio.getMessages().send(player, "recorder.stop-playing-recorded");
                 return true;
-            } else if(!recorder.isRecording(player)){
+            } else if(!recorder.stopRecording()){
                 MLDokio.getMessages().send(player, "recorder.you-are-not-recording");
                 return true;
-            }
-            recorder.stopRecording(player);
-            MLDokio.getMessages().send(player, "recorder.recording-stopped");
+            } else MLDokio.getMessages().send(player, "recorder.recording-stopped");
         } else if(sub.equalsIgnoreCase( "play")){
-            if(!recorder.hasRecordings(player)) {
+            if(recorder == null) {
                 MLDokio.getMessages().send(player, "recorder.you-didnt-record-anything");
                 return true;
             }
-            recorder.playRecorded(player);
+            recorder.playRecorded();
             MLDokio.getMessages().send(player, "recorder.play-recorded");
         } else if(sub.equalsIgnoreCase("save")){
             //TODO SAVE RECORDING
             if(args.length<2) return false;
-            if(!recorder.hasRecordings(player)) {
+            if(recorder == null) {
                 MLDokio.getMessages().send(player, "recorder.you-didnt-record-anything");
                 return true;
             }
@@ -65,9 +67,8 @@ public class RecorderCommand extends BukkitCommand
                 MLDokio.getMessages().send(player, "recorder.recording-exists");
                 return true;
             }
-            UUID uuid = recorder.getIdOfRecording(player);
-            recordings.saveTrack(uuid, recorder.getBuffer(player), trackLabel);
-            recorder.clearTape(player);
+            recorder.save(trackLabel, recordings);
+            recorder.clearTape();
             MLDokio.getMessages().sendWithTrackLabel(player, "recorder.recording-saved",trackLabel);
         }
         return true;

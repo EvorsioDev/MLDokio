@@ -16,8 +16,7 @@ public class TickCounter
     }
 
     public void start(){
-        if(task==null)
-            task = Bukkit.getScheduler().runTaskTimer(MLDokio.getInstance(), counter::incrementAndGet,1,1);
+        task = Bukkit.getScheduler().runTaskTimer(MLDokio.getInstance(), counter::incrementAndGet,1,1);
     }
 
     public void stop(){
@@ -28,5 +27,9 @@ public class TickCounter
         synchronized (counter) {
             return counter.get();
         }
+    }
+
+    public void reset(){
+        counter.set(0);
     }
 }

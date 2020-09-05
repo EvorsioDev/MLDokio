@@ -4,7 +4,6 @@ import ru.armagidon.mldokio.MLDokio;
 import ru.armagidon.mldokio.sound.SoundBuffer;
 import ru.armagidon.mldokio.sound.SoundTrack;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
@@ -32,11 +31,7 @@ public class Recordings
     }
 
     public SoundTrack getTrack(String label){
-        try {
-            return MLDokio.getInstance().getIOWorker().deserialize(label);
-        } catch (FileNotFoundException e) {
-            return null;
-        }
+        return MLDokio.getInstance().getIOWorker().deserialize(label);
     }
 
     public SoundTrack getTrack(UUID uuid){

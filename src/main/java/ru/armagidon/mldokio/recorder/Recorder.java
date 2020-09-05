@@ -1,66 +1,89 @@
 package ru.armagidon.mldokio.recorder;
 
-import com.comphenix.protocol.ProtocolLibrary;
+import lombok.Getter;
+import lombok.Setter;
 import org.bukkit.entity.Player;
-import ru.armagidon.mldokio.handlers.PacketRecorder;
-import ru.armagidon.mldokio.soundplayer.SoundPlayer;
+import ru.armagidon.mldokio.MLDokio;
 import ru.armagidon.mldokio.sound.SoundBuffer;
+import ru.armagidon.mldokio.jukebox.JukeBox;
+import ru.armagidon.mldokio.util.TickCounter;
+import ru.armagidon.mldokio.util.data.SoundContainer;
+import ru.armagidon.mldokio.util.observer.Observer;
 
-import java.util.*;
+import java.util.UUID;
 
-public class Recorder
+public class Recorder implements Observer<SoundContainer>
 {
-    private final Map<Player, SoundBuffer> recordings = new HashMap<>();
-    private final Map<Player, UUID> recordingsIds = new HashMap<>();
-    private final Set<Player> recordersNow = new HashSet<>();
+    private final SoundBuffer tape;
+    private UUID idOfTape;
+    private UUID jukeBoxID;
+    private @Setter Player soundSource;
+    private @Getter @Setter boolean recording;
+    private final TickCounter counter;
+    private @Setter RecorderCallBack callBack;
 
     public Recorder() {
-        ProtocolLibrary.getProtocolManager().addPacketListener(new PacketRecorder(this));
+        this.tape = new SoundBuffer();
+        this.counter = new TickCounter();
+        MLDokio.getInstance().getMicrophone().registerObserver(this);
     }
 
-    public void startRecording(Player player){
-        if(isRecording(player)) stopRecording(player);
-        SoundBuffer buffer = new SoundBuffer();
-        buffer.getCounter().start();
-        recordings.put(player, buffer);
-        recordersNow.add(player);
+    public boolean startRecording(Player source){
+        if(isRecording()) return false;
+        soundSource = source;
+        clearTape();
+        counter.start();
+        idOfTape = UUID.randomUUID();
+        setRecording(true);
+        return true;
     }
 
-    public SoundBuffer getBuffer(Player player){
-        return recordings.get(player);
+    public boolean stopRecording(){
+        if(!isRecording()) return false;
+        setRecording(false);
+        counter.stop();
+        return true;
     }
 
-    public void stopRecording(Player player){
-        if(!isRecording(player)) return;
-        SoundBuffer buffer = recordings.get(player);
-        buffer.getCounter().stop();
-        recordersNow.remove(player);
-        recordingsIds.put(player, UUID.randomUUID());
+    public void save(String label, Recordings recordings){
+        recordings.saveTrack(idOfTape, tape, label);
     }
 
-    public void playRecorded(Player recorder){
-        SoundPlayer recordedSoundPlayer = SoundPlayer.createSoundPlayer(recordingsIds.get(recorder), recordings.get(recorder), recorder);
-        recordedSoundPlayer.play();
+    public void clearTape(){
+        tape.reset();
+        counter.reset();
     }
 
-    public void stopPlayingRecorded(Player recorder){
-        SoundPlayer recordedSoundPlayer = SoundPlayer.getSoundPlayer(recordingsIds.get(recorder));
-        recordedSoundPlayer.stop();
+    public boolean playRecorded() {
+        if(idOfTape==null||tape==null||soundSource==null) return false;
+        if(isPlaying()) return false;
+        jukeBoxID = MLDokio.getInstance().getJukeBoxPool().dedicateJukeBox(soundSource, tape,true);
+        JukeBox jukeBox = getJukeBox();
+        jukeBox.play();
+        callBack.onStartPlaying();
+        return true;
     }
 
-    public void clearTape(Player player){
-        recordings.remove(player);
+    public boolean stopRecorded(){
+        if(idOfTape==null||tape==null||soundSource==null) return false;
+        if(!isPlaying()) return false;
+        JukeBox jukeBox = getJukeBox();
+        jukeBox.stop();
+        callBack.onStopPlaying();
+        return true;
     }
 
-    public boolean isRecording(Player player){
-        return recordersNow.contains(player);
+    public boolean isPlaying() {
+        return jukeBoxID!=null && getJukeBox()!=null && getJukeBox().isPlaying();
     }
 
-    public boolean hasRecordings(Player player){
-        return recordings.containsKey(player);
+    @Override
+    public void update(Player player, SoundContainer data) {
+        if(!(player.equals(soundSource) && isRecording())) return;
+        tape.addNew(data, counter.getTicks());
     }
 
-    public UUID getIdOfRecording(Player player){
-        return recordingsIds.get(player);
+    public JukeBox getJukeBox(){
+        return MLDokio.getInstance().getJukeBoxPool().getJukeBoxByIdOrNullIfNotFound(jukeBoxID);
     }
 }

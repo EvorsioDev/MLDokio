@@ -2,8 +2,8 @@ package ru.armagidon.mldokio.io;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import lombok.SneakyThrows;
 import org.bukkit.plugin.Plugin;
-import ru.armagidon.mldokio.recorder.Recordings;
 import ru.armagidon.mldokio.sound.SoundBuffer;
 import ru.armagidon.mldokio.sound.SoundTrack;
 import ru.armagidon.mldokio.util.data.SoundContainer;
@@ -38,17 +38,8 @@ public class IOWorker
         }
     }
 
-    public SoundTrack deserialize(String label) throws FileNotFoundException {
-        /*Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(SoundContainer.class, soundContainerAdapter)
-                .registerTypeAdapter(SoundBuffer.class, soundBufferAdapter).registerTypeAdapter(SoundTrack.class, soundTrackAdapter).create();
-        String json = gson.toJson(soundTrack);
-        File file = new File(musicFolder, soundTrack.getLabel()+".mcsound");
-        if(file.exists()){
-            throw new IllegalStateException();
-        }
-        try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
-            writer.write(json);
-        }*/
+    @SneakyThrows
+    public SoundTrack deserialize(String label) {
         File file = new File(musicFolder, label+".mcsound");
         if(!file.exists()){
             throw new FileNotFoundException();
@@ -57,9 +48,6 @@ public class IOWorker
             Gson gson = new GsonBuilder().setPrettyPrinting().registerTypeAdapter(SoundContainer.class, soundContainerAdapter)
                     .registerTypeAdapter(SoundBuffer.class, soundBufferAdapter).registerTypeAdapter(SoundTrack.class, soundTrackAdapter).create();
             return gson.fromJson(reader, SoundTrack.class);
-        } catch (IOException e){
-            e.printStackTrace();
-            return null;
         }
     }
 

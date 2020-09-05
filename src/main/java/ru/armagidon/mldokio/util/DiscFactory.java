@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import ru.armagidon.mldokio.MLDokio;
+import ru.armagidon.mldokio.sound.SoundBuffer;
 import ru.armagidon.mldokio.sound.SoundTrack;
 
 import java.util.Collections;

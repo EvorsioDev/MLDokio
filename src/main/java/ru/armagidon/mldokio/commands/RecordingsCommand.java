@@ -3,7 +3,6 @@ package ru.armagidon.mldokio.commands;
 import com.google.common.base.Joiner;
 import org.bukkit.entity.Player;
 import ru.armagidon.mldokio.MLDokio;
-import ru.armagidon.mldokio.soundplayer.SoundPlayer;
 import ru.armagidon.mldokio.recorder.Recordings;
 import ru.armagidon.mldokio.sound.SoundTrack;
 import ru.armagidon.mldokio.util.DiscFactory;
@@ -11,6 +10,7 @@ import ru.armagidon.mldokio.util.DiscFactory;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -18,6 +18,7 @@ public class RecordingsCommand extends BukkitCommand
 {
 
     private final Recordings recordings;
+    private UUID jukeBoxID;
 
     public RecordingsCommand(Recordings recordings) {
         super("recordings");
@@ -30,6 +31,7 @@ public class RecordingsCommand extends BukkitCommand
         String sub = args[0];
 
         if(args.length>=2){
+
             String trackLabel = Joiner.on(" ").join(Arrays.copyOfRange(args, 1,args.length));
             SoundTrack cassette = recordings.getTrack(trackLabel);
             if(cassette==null){
@@ -37,10 +39,12 @@ public class RecordingsCommand extends BukkitCommand
                 return true;
             }
             if(sub.equalsIgnoreCase("play")){
-                SoundPlayer.createSoundPlayer(cassette.getId(), cassette.getBuffer(), player).play();
+                jukeBoxID =  MLDokio.getInstance().getJukeBoxPool().dedicateJukeBox(player, cassette.getBuffer(),  true);
+                MLDokio.getInstance().getJukeBoxPool().getJukeBoxByIdOrNullIfNotFound(jukeBoxID).play();
                 MLDokio.getMessages().sendWithTrackLabel(player, "recordings.playing-recording", trackLabel);
             } else if(sub.equalsIgnoreCase("stop")){
-                SoundPlayer.getSoundPlayer(cassette.getId()).stop();
+                if(jukeBoxID!=null)
+                    MLDokio.getInstance().getJukeBoxPool().getJukeBoxByIdOrNullIfNotFound(jukeBoxID).stop();
                 MLDokio.getMessages().sendWithTrackLabel(player, "recordings.stopped-playing-recording",trackLabel);
             } else if(sub.equalsIgnoreCase("get")){
                 player.getInventory().addItem(DiscFactory.createDisc(cassette));

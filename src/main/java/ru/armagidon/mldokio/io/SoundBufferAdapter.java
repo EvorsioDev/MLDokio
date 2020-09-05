@@ -36,7 +36,7 @@ public class SoundBufferAdapter implements JsonSerializer<SoundBuffer>, JsonDese
     @Override
     public JsonElement serialize(SoundBuffer src, Type typeOfSrc, JsonSerializationContext context) {
         JsonArray rawBuffer = new JsonArray();
-        src.forEach(pair->{
+        src.getSoundsAndDelays().forEach(pair->{
             JsonObject compound = new JsonObject();
             compound.addProperty("interval", pair.getSecond());
             compound.add("container", context.serialize(pair.getFirst()));

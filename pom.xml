@@ -116,5 +116,10 @@
             <version>1.18.12</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>ru.armagidon</groupId>
+            <artifactId>ArmagidonAPI</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

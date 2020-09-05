@@ -2,7 +2,7 @@ package ru.armagidon.mldokio.player;
 
 import lombok.Getter;
 import org.bukkit.entity.Player;
-import ru.armagidon.mldokio.soundplayer.SoundPlayer;
+import ru.armagidon.mldokio.jukebox.JukeBox;
 
 import java.util.*;
 
@@ -12,7 +12,7 @@ public class MusicListener
     public static final Map<Player, MusicListener> musicListeners = new HashMap<>();
 
     private @Getter final Player handle;
-    private @Getter final Map<UUID, SoundPlayer> soundPlayers;
+    private @Getter final Map<UUID, JukeBox> soundPlayers;
 
     public MusicListener(Player handle) {
         this.handle = handle;
