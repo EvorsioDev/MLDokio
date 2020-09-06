@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import lombok.SneakyThrows;
 import org.bukkit.plugin.Plugin;
+import ru.armagidon.mldokio.MLDokio;
 import ru.armagidon.mldokio.sound.SoundBuffer;
 import ru.armagidon.mldokio.sound.SoundTrack;
 import ru.armagidon.mldokio.util.data.SoundContainer;
@@ -25,16 +26,17 @@ public class IOWorker
         if(!musicFolder.exists()){
             if(musicFolder.mkdirs()) plugin.getLogger().info("Music folder created!");
         }
-
     }
 
-    public void serialize(SoundTrack soundTrack) throws IOException {
+    public void serialize(SoundTrack soundTrack) {
         Gson gson = new GsonBuilder().registerTypeAdapter(SoundContainer.class, soundContainerAdapter)
-                .registerTypeAdapter(SoundBuffer.class, soundBufferAdapter).registerTypeAdapter(SoundTrack.class, soundTrackAdapter).create();
+                .registerTypeAdapter(SoundBuffer.class, soundBufferAdapter).registerTypeAdapter(SoundTrack.class, soundTrackAdapter).setPrettyPrinting().create();
         String json = gson.toJson(soundTrack);
         File file = new File(musicFolder, soundTrack.getLabel()+".mcsound");
         try(BufferedWriter writer = new BufferedWriter(new FileWriter(file))){
             writer.write(json);
+        } catch (IOException e){
+            e.printStackTrace();
         }
     }
 
@@ -60,5 +62,16 @@ public class IOWorker
             return name.getName().substring(0, index);
         }).forEach(labels::add);
         return labels;
+    }
+
+    public void renameSoundTrack(String file, String label){
+        File musicFile = new File(musicFolder, file+".mcsound");
+        File renameTo = new File(musicFolder, label+".mcsound");
+        if(!musicFile.renameTo(renameTo)){
+            MLDokio.getInstance().getLogger().severe("Failed to rename soundtrack: "+file);
+        }
+        SoundTrack track = deserialize(label);
+        track.setLabel(label);
+        serialize(track);
     }
 }

@@ -41,10 +41,9 @@ public class JukeboxPacketHandler extends PacketAdapter
 
         if(block.getType().equals(Material.JUKEBOX)) {
             Jukebox jukebox = (Jukebox) block.getState();
-            if(material.equals(Material.MUSIC_DISC_STAL)) {
+            if(material.isRecord()) {
                 boolean cancelled = !new JukeboxSongPlayEvent(jukebox, jukebox.getRecord()).callEvent();
                 if (cancelled) {
-
                     PacketContainer cloned = event.getPacket().deepClone();
                     cloned.getIntegers().write(1,getAirId());
                     event.setPacket(cloned);

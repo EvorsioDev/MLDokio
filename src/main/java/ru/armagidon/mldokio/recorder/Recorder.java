@@ -46,7 +46,8 @@ public class Recorder implements Observer<SoundContainer>
     }
 
     public void save(String label, Recordings recordings){
-        recordings.saveTrack(idOfTape, tape, label);
+        if(soundSource!=null)
+            recordings.saveTrack(soundSource.getUniqueId(),idOfTape, tape, label);
     }
 
     public void clearTape(){

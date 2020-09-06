@@ -4,7 +4,6 @@ import ru.armagidon.mldokio.MLDokio;
 import ru.armagidon.mldokio.sound.SoundBuffer;
 import ru.armagidon.mldokio.sound.SoundTrack;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,13 +16,14 @@ public class Recordings
     }
 
 
-    public void saveTrack(UUID idOfMagnetTape, SoundBuffer data, String label){
-        try {
-            MLDokio.getInstance().getIOWorker().serialize(new SoundTrack(data, label, idOfMagnetTape));
-            tracks.put(idOfMagnetTape, label);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+    public void saveTrack(UUID author, UUID idOfMagnetTape, SoundBuffer data, String label){
+        MLDokio.getInstance().getIOWorker().serialize(new SoundTrack(data, label, idOfMagnetTape, author));
+        tracks.put(idOfMagnetTape, label);
+    }
+
+    public void changeLabel(SoundTrack track, String newName){
+        tracks.put(track.getId(), newName);
+        MLDokio.getInstance().getIOWorker().renameSoundTrack(track.getLabel(), newName);
     }
 
     public boolean contains(String label){

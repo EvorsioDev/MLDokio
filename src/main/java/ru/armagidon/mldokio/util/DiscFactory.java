@@ -14,19 +14,30 @@ import ru.armagidon.mldokio.sound.SoundTrack;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class DiscFactory
 {
-    public static ItemStack createDisc(SoundTrack track){
-        ItemStack disc = new ItemStack(Material.MUSIC_DISC_STAL);
+    public static ItemStack createDisc(ItemStack input, SoundTrack track){
+        ItemStack disc = input.clone();
         ItemMeta meta = disc.getItemMeta();
         List<String> lore = Collections.singletonList(String.valueOf(ChatColor.ITALIC) + ChatColor.GRAY + track.getLabel());
         meta.setLore(lore);
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         PersistentDataContainer container = meta.getPersistentDataContainer();
         NamespacedKey tagKey = new NamespacedKey(MLDokio.getInstance(), "DiscData");
         container.set(tagKey, PersistentDataType.STRING, track.getId().toString());
         disc.setItemMeta(meta);
         return disc;
+    }
+
+    public static ItemStack copy(ItemStack input, ItemStack source){
+        ItemMeta meta = source.getItemMeta();
+        PersistentDataContainer container = meta.getPersistentDataContainer();
+        NamespacedKey tagKey = new NamespacedKey(MLDokio.getInstance(), "DiscData");
+        String rawUUID = container.get(tagKey, PersistentDataType.STRING);
+        if(rawUUID==null) return input;
+        UUID uuid = UUID.fromString(rawUUID);
+        SoundTrack track = MLDokio.getInstance().getRecordings().getTrack(uuid);
+        return createDisc(input, track);
     }
 }

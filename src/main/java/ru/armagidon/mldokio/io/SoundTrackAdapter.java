@@ -15,15 +15,17 @@ public class SoundTrackAdapter implements JsonSerializer<SoundTrack>, JsonDeseri
         if(!json.isJsonObject()) return null;
         JsonObject compound = json.getAsJsonObject();
         UUID uuid = UUID.fromString(compound.getAsJsonPrimitive("uuid").getAsString());
+        UUID author = UUID.fromString(compound.getAsJsonPrimitive("author").getAsString());
         String label = compound.getAsJsonPrimitive("label").getAsString();
         SoundBuffer buffer = context.deserialize(compound.getAsJsonArray("buffer"), SoundBuffer.class);
-        return new SoundTrack(buffer, label, uuid);
+        return new SoundTrack(buffer, label, uuid,author);
     }
 
     @Override
     public JsonElement serialize(SoundTrack src, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject compound = new JsonObject();
         compound.addProperty("uuid", src.getId().toString());
+        compound.addProperty("author",src.getAuthorId().toString());
         compound.addProperty("label",src.getLabel());
         compound.add("buffer", context.serialize(src.getBuffer()));
         return compound;

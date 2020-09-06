@@ -1,14 +1,14 @@
 package ru.armagidon.mldokio.handlers;
 
 import com.comphenix.protocol.ProtocolLibrary;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
+import org.bukkit.*;
 import org.bukkit.block.Jukebox;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
@@ -22,6 +22,7 @@ import ru.armagidon.mldokio.player.MusicListener;
 import ru.armagidon.mldokio.recorder.Recordings;
 import ru.armagidon.mldokio.sound.SoundTrack;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -89,6 +90,46 @@ public class PluginListener implements Listener
             if(jukeBoxIds.containsKey(jukebox.getLocation()))
                 new JukeboxSongStopEvent(jukebox, jukebox.getRecord()).callEvent();
         }
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void onRename(InventoryClickEvent event){
+        InventoryType.SlotType slotType = event.getSlotType();
+        if(!slotType.equals(InventoryType.SlotType.RESULT)) return;
+        if(!event.getInventory().getType().equals(InventoryType.ANVIL)) return;
+        ItemStack item = event.getCurrentItem();
+        if(item==null||!item.getType().isRecord()) return;
+
+        ItemMeta meta = item.getItemMeta();
+        NamespacedKey tagKey = new NamespacedKey(MLDokio.getInstance(), "DiscData");
+        String uuidString = meta.getPersistentDataContainer().get(tagKey, PersistentDataType.STRING);
+        if(uuidString==null) return;
+        UUID uuid = UUID.fromString(uuidString);
+        SoundTrack trackToPlay = recordings.getTrack(uuid);
+        if(trackToPlay==null) return;
+
+        UUID playerId = event.getWhoClicked().getUniqueId();
+        if(!playerId.equals(trackToPlay.getAuthorId())) return;
+        recordings.changeLabel(trackToPlay, item.getItemMeta().getDisplayName());
+        meta.setLore(Collections.singletonList(String.valueOf(ChatColor.ITALIC) + ChatColor.GRAY + trackToPlay.getLabel()));
+        item.setItemMeta(meta);
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void onDiscUpdate(InventoryClickEvent event){
+        ItemStack item = event.getCurrentItem();
+        if(item==null||!item.getType().isRecord()) return;
+
+        ItemMeta meta = item.getItemMeta();
+        NamespacedKey tagKey = new NamespacedKey(MLDokio.getInstance(), "DiscData");
+        String uuidString = meta.getPersistentDataContainer().get(tagKey, PersistentDataType.STRING);
+        if(uuidString==null) return;
+        UUID uuid = UUID.fromString(uuidString);
+        SoundTrack trackToPlay = recordings.getTrack(uuid);
+        if(trackToPlay==null) return;
+
+        meta.setLore(Collections.singletonList(String.valueOf(ChatColor.ITALIC) + ChatColor.GRAY + trackToPlay.getLabel()));
+        item.setItemMeta(meta);
     }
 
 }
