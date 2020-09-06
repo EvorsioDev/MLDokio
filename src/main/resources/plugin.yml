@@ -5,3 +5,24 @@ api-version: "1.16"
 depend: [ProtocolLib]
 authors: [Armagidon_MC]
 description: Allows you to record your music in minecraft
+permissions:
+  mldokio.recordings.*:
+    description: "Gives access to all /recordings subcommands"
+    default: op
+    children:
+      mldokio.recordings.get: true
+      mldokio.recordings.play: true
+      mldokio.recordings.stop: true
+  mldokio.recorder.*:
+    description: "Gives access to all /recorder subcommands"
+    default: op
+    children:
+      mldokio.recorder.start: true
+      mldokio.recorder.stop: true
+      mldokio.recorder.play: true
+      mldokio.recordings.save: true
+  mldokio.*:
+    default: op
+    children:
+      mldokio.recorder.*: true
+      mldokio.recordings.*: true

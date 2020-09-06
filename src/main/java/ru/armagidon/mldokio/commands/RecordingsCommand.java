@@ -1,7 +1,10 @@
 package ru.armagidon.mldokio.commands;
 
 import com.google.common.base.Joiner;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import ru.armagidon.mldokio.MLDokio;
 import ru.armagidon.mldokio.recorder.Recordings;
 import ru.armagidon.mldokio.sound.SoundTrack;
@@ -39,15 +42,27 @@ public class RecordingsCommand extends BukkitCommand
                 return true;
             }
             if(sub.equalsIgnoreCase("play")){
+                if(!player.hasPermission("mldokio.recordings.play")) {
+                    player.sendMessage(Bukkit.getPermissionMessage());
+                    return true;
+                }
                 jukeBoxID =  MLDokio.getInstance().getJukeBoxPool().dedicateJukeBox(player, cassette.getBuffer(),  true);
                 MLDokio.getInstance().getJukeBoxPool().getJukeBoxByIdOrNullIfNotFound(jukeBoxID).play();
                 MLDokio.getMessages().sendWithTrackLabel(player, "recordings.playing-recording", trackLabel);
             } else if(sub.equalsIgnoreCase("stop")){
+                if(!player.hasPermission("mldokio.recordings.stop")) {
+                    player.sendMessage(Bukkit.getPermissionMessage());
+                    return true;
+                }
                 if(jukeBoxID!=null)
                     MLDokio.getInstance().getJukeBoxPool().getJukeBoxByIdOrNullIfNotFound(jukeBoxID).stop();
                 MLDokio.getMessages().sendWithTrackLabel(player, "recordings.stopped-playing-recording",trackLabel);
             } else if(sub.equalsIgnoreCase("get")){
-                player.getInventory().addItem(DiscFactory.createDisc(cassette));
+                if(!player.hasPermission("mldokio.recordings.get")) {
+                    player.sendMessage(Bukkit.getPermissionMessage());
+                    return true;
+                }
+                player.getInventory().addItem(DiscFactory.createDisc(new ItemStack(Material.MUSIC_DISC_STAL),cassette));
                 MLDokio.getMessages().sendWithTrackLabel(player, "recordings.disc-given",trackLabel);
             }
         }

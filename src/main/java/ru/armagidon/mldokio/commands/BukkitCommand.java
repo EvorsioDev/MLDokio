@@ -43,4 +43,8 @@ public abstract class BukkitCommand
     public final void unregister(){
         command.unregister(Bukkit.getCommandMap());
     }
+
+    public PluginCommand getCommand() {
+        return command;
+    }
 }

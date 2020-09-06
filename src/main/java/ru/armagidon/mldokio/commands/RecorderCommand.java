@@ -1,6 +1,7 @@
 package ru.armagidon.mldokio.commands;
 
 import com.google.common.base.Joiner;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import ru.armagidon.mldokio.MLDokio;
 import ru.armagidon.mldokio.player.MusicListener;
@@ -28,6 +29,10 @@ public class RecorderCommand extends BukkitCommand
         String sub = args[0];
         Recorder recorder = recordingPlayers.get(player);
         if(sub.equalsIgnoreCase("start")){
+            if(!player.hasPermission("mldokio.recorder.start")) {
+                player.sendMessage(Bukkit.getPermissionMessage());
+                return true;
+            }
             if(recorder!=null) {
                 if (recorder.isRecording()) {
                     MLDokio.getMessages().send(player, "recorder.you-are-already-recording");
@@ -40,6 +45,10 @@ public class RecorderCommand extends BukkitCommand
             recorder.startRecording(player);
             MLDokio.getMessages().send(player, "recorder.recording-started");
         } else if(sub.equalsIgnoreCase("stop")){
+            if(!player.hasPermission("mldokio.recorder.stop")) {
+                player.sendMessage(Bukkit.getPermissionMessage());
+                return true;
+            }
             if(MusicListener.musicListeners.get(player).isListening()){
                 recorder.stopRecorded();
                 MLDokio.getMessages().send(player, "recorder.stop-playing-recorded");
@@ -49,6 +58,10 @@ public class RecorderCommand extends BukkitCommand
                 return true;
             } else MLDokio.getMessages().send(player, "recorder.recording-stopped");
         } else if(sub.equalsIgnoreCase( "play")){
+            if(!player.hasPermission("mldokio.recorder.play")) {
+                player.sendMessage(Bukkit.getPermissionMessage());
+                return true;
+            }
             if(recorder == null) {
                 MLDokio.getMessages().send(player, "recorder.you-didnt-record-anything");
                 return true;
@@ -56,7 +69,10 @@ public class RecorderCommand extends BukkitCommand
             recorder.playRecorded();
             MLDokio.getMessages().send(player, "recorder.play-recorded");
         } else if(sub.equalsIgnoreCase("save")){
-            //TODO SAVE RECORDING
+            if(!player.hasPermission("mldokio.recorder.save")) {
+                player.sendMessage(Bukkit.getPermissionMessage());
+                return true;
+            }
             if(args.length<2) return false;
             if(recorder == null) {
                 MLDokio.getMessages().send(player, "recorder.you-didnt-record-anything");
