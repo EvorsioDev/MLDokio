@@ -15,4 +15,4 @@ Tested on: <a href="https://getbukkit.org/">Spigot</a>, <a href="https://github.
 Available at the following options:
 
 * **[SpigotMC](https://www.spigotmc.org/resources/mldokio-write-a-music-to-your-heart.83583/)** - Download plugin on SpigotMC
-* **[GitHub Releases](https://github.com/StumpStudio/MLDokio/releasess)** - Download source code MLDokio
+* **[GitHub Releases](https://github.com/StumpStudio/MLDokio/releases)** - Download source code MLDokio
