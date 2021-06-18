@@ -10,3 +10,9 @@
 <h3>✔️ Recommended use on <a href="https://github.com/PaperMC/Paper">Paper</a> or others <a href="https://github.com/Tuinity/Tuinity">Paper Forks</a>.</h3>
 Tested on: <a href="https://github.com/PaperMC/Paper">Paper</a>, <a href="https://github.com/Tuinity/Tuinity">Tuinity</a>,
 <a href="https://github.com/pl3xgaming/Purpur">Purpur</a>, <a href="https://github.com/TECHNOVE/Airplane">Airplane</a>, <a href="https://github.com/YatopiaMC/Yatopia">Yatopia</a>.
+
+## Give it a try ##
+Available at the following options:
+
+* **[SpigotMC](https://www.spigotmc.org/resources/mldokio-write-a-music-to-your-heart.83583/)** - Download plugin on SpigotMC
+* **[GitHub Releases](https://github.com/StumpStudio/MLDokio/releasess)** - Download source code MLDokio
